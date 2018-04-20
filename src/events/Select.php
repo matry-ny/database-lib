@@ -5,7 +5,6 @@ namespace dk\database\events;
 use PDO;
 use dk\database\Command;
 use dk\database\DbConnectionTrait;
-use dk\database\SelectIterator;
 
 /**
  * Class Select
@@ -14,22 +13,6 @@ use dk\database\SelectIterator;
 class Select extends Command
 {
     use DbConnectionTrait;
-
-    /**
-     * @var SelectIterator
-     */
-    private $selectIterator;
-
-    /**
-     * Select constructor.
-     * @param PDO $connection
-     * @param $iteratorClass
-     */
-    public function __construct(PDO $connection, $iteratorClass)
-    {
-        parent::__construct($connection);
-        $this->selectIterator = $iteratorClass;
-    }
 
     /**
      * @param array $fields
@@ -59,9 +42,13 @@ class Select extends Command
         return $this->execute()->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function each($stack = 100)
+    /**
+     * @param int $stack
+     * @param string $iteratorClass
+     * @return mixed
+     */
+    public function each($stack = 100, $iteratorClass)
     {
-        $iteratorClass = $this->selectIterator;
         return new $iteratorClass($this->build(), $stack);
     }
 
