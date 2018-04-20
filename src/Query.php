@@ -3,6 +3,7 @@
 namespace dk\database;
 
 use InvalidArgumentException;
+use PDO;
 
 /**
  * Class Query
@@ -42,15 +43,15 @@ class Query
     ];
 
     /**
-     * @param string $command
-     * @throws InvalidArgumentException
-     * @return Command
+     * @param $command
+     * @param PDO $connection
+     * @return mixed
      */
-    public function getBuilder($command)
+    public function getBuilder($command, PDO $connection)
     {
         if (array_key_exists($command, $this->classesMap)) {
             $commandClass = $this->classesMap[$command];
-            return new $commandClass();
+            return new $commandClass($connection);
         }
 
         throw new InvalidArgumentException("Command '{$command}' is not allowed");
